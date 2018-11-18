@@ -64,7 +64,3 @@
 
 (define (shortest-interval-supersets1 lst)
   (insertion-sort cdr-pair (shortest-interval-supersets lst)))
-  
-  
-  
-  
