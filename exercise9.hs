@@ -81,9 +81,3 @@ histogram xs = foldr (\y ys -> ys ++ [(y, count y xs)]) [] (make_set xs)
 
 max_distance :: [(Double, Double)] -> Double
 max_distance xs = maximum [sqrt ((x2 - x1)^2 + (y2 - y1)^2) | (x1, y1) <- xs, (x2, y2) <- xs, (x1, y1) /= (x2, y2)]
-
-
-
-
-
-
