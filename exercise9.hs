@@ -1,7 +1,6 @@
 replicate' :: Integral a => a -> b -> [b]
-replicate' n x
-    | n == 0        = []
-    | otherwise     = replicate' (n - 1) x ++ [x]
+replicate' 0 _       = []
+replicate' n (x:xs)  = x : replicate' (n - 1) xs
 
 
 minimum' :: Ord a => [a] -> a
@@ -22,10 +21,12 @@ length' xs = foldr (\_ n -> n + 1) 0 xs
 
 all' :: Eq a => (a -> Bool) -> [a] -> Bool
 all' p xs = xs == (foldr (\x xs -> if p x then x : xs else xs) [] xs)
+--all' p xs = xs == filter p xs
 
 
 any' :: (a -> Bool) -> [a] -> Bool
-any' p xs = not (null (foldr (\x xs -> if p x then x : xs else xs) [] xs))
+any' p xs = (not (null (foldr (\x res -> if p x then x:res else res) [] xs)))
+--any' p xs = not $ null $ filter p xs
 
 
 replicate'' :: Integral a => a -> b -> [b]
@@ -40,7 +41,8 @@ sum_divisors n = sum [i | i <- [1..n], mod n i == 0]
 
 
 is_prime :: Integral a => a -> Bool
-is_prime n = length [i | i <- [2..n], mod n i == 0] == 1
+is_prime n = length [i | i <- [2..sqrt' n], mod n i == 0] == 1
+    where sqrt' = floor $ sqrt $ fromIntegral
 
 
 decartes :: [a] -> [a] -> [(a, a)]
@@ -53,7 +55,7 @@ primes = [x | x <- [2..], is_prime x]
 natural_pairs = [(x,y) | x <- [1..], y <- [1..]]
 
 
-pythagorean_triples = [(a, b, c) | a <- [1..100], b <- [1..100], c <- [1..100], a^2 + b^2 == c^2]
+pythagorean_triples = [(a, b, c) | c <- [5..], b <- [4..c], a <- [3..c], a < b, a^2 + b^2 == c^2]
 
 
 compress :: Eq a => [a] -> [(a, Int)]
@@ -69,15 +71,12 @@ max_repeated :: Eq a => [a] -> Int
 max_repeated xs = maximum (map snd (compress xs))
 
 
-count :: Eq a => a -> [a] -> Int
-count el xs
-    | null xs         = 0
-    | el == head xs   = 1 + count el (tail xs)
-    | otherwise       = count el (tail xs)
-
 histogram :: Eq a => [a] -> [(a, Int)]
 histogram xs = foldr (\y ys -> ys ++ [(y, count y xs)]) [] (make_set xs)
+    where count x xs = length $ filter (==x) xs
 
 
 max_distance :: [(Double, Double)] -> Double
-max_distance xs = maximum [sqrt ((x2 - x1)^2 + (y2 - y1)^2) | (x1, y1) <- xs, (x2, y2) <- xs, (x1, y1) /= (x2, y2)]
+max_distance xs = maximum [distance | (x1, y1) <- xs, (x2, y2) <- xs, 
+                                      (x1, y1) /= (x2, y2)
+                                       let distance = sqrt ((x2 - x1)^2 + (y2 - y1)^2)]
