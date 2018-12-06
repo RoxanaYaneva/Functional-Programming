@@ -1,6 +1,9 @@
 replicate' :: Integral a => a -> b -> [b]
-replicate' 0 _       = []
-replicate' n (x:xs)  = x : replicate' (n - 1) xs
+replicate' 0 _  = []
+replicate' n x  = x : replicate' (n - 1) x
+
+replicate'' :: Integral a => a -> b -> [b]
+replicate'' x y = foldr (\_ ys -> y : ys) [] [1..x]
 
 
 minimum' :: Ord a => [a] -> a
@@ -25,12 +28,9 @@ all' p xs = xs == (foldr (\x xs -> if p x then x : xs else xs) [] xs)
 
 
 any' :: (a -> Bool) -> [a] -> Bool
-any' p xs = (not (null (foldr (\x res -> if p x then x:res else res) [] xs)))
+any' p xs = not $ null $ foldr (\x res -> if p x then x:res else res) [] xs
 --any' p xs = not $ null $ filter p xs
 
-
-replicate'' :: Integral a => a -> b -> [b]
-replicate'' x y = foldr (\_ ys -> y : ys) [] [1..x]
 
 make_set :: Eq a => [a] -> [a]
 make_set xs = foldr (\x xs -> if elem x xs then xs else x:xs) [] xs
@@ -41,8 +41,8 @@ sum_divisors n = sum [i | i <- [1..n], mod n i == 0]
 
 
 is_prime :: Integral a => a -> Bool
-is_prime n = length [i | i <- [2..sqrt' n], mod n i == 0] == 1
-    where sqrt' = floor $ sqrt $ fromIntegral
+is_prime n = null [i | i <- [2..sqrt' n], mod n i == 0]
+    where sqrt' n = floor $ sqrt $ fromIntegral n
 
 
 decartes :: [a] -> [a] -> [(a, a)]
@@ -78,5 +78,5 @@ histogram xs = foldr (\y ys -> ys ++ [(y, count y xs)]) [] (make_set xs)
 
 max_distance :: [(Double, Double)] -> Double
 max_distance xs = maximum [distance | (x1, y1) <- xs, (x2, y2) <- xs, 
-                                      (x1, y1) /= (x2, y2)
+                                      (x1, y1) /= (x2, y2),
                                       let distance = sqrt ((x2 - x1)^2 + (y2 - y1)^2)]
