@@ -110,6 +110,27 @@
 (define (insertion-sort lst)
   (foldr insert '() lst))
 
+;my-arity
+(define (my-arity . xs) (length xs))
+
+;compose
+(define (compose . fns)
+  (define (compose-rec arg)
+    (if (null? fns)
+        arg
+        (let ((fn (car fns))
+              (rest (cdr fns)))
+          (set! fns rest)
+          (fn (compose-rec arg)))))
+  compose-rec)
+
+;group by
+(define (group-by f lst)
+  (foldr (lambda (u v) (append v (list (cons u (list (filter (lambda (el) (eq? u (f el))) lst))))))
+         '()
+         (uniques (map f lst))))
+  
+
 (define (next-look-and-say lst)
   (define (iter cnt lst)
     (cond
