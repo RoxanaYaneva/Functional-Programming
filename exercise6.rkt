@@ -48,10 +48,11 @@
   (if (> a b)
       nv
       (op (term a) (accumulate op nv (next a) b term next)))) 
-  
+
+(define (const x) (lambda (y) x)) 
 
 (define (calcprod f n)
-  (lambda (x) (accumulate * 1 1 n (lambda (i) ((average f (lambda (bla) (expt i x))) i)) 1+))) 
+  (lambda (x) (accumulate * 1 1 n (lambda (i) ((average f (const (expt i x))) i)) 1+))) 
   
 
 ;sublist? lst1 of lst2
