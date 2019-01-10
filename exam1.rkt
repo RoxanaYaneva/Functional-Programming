@@ -31,6 +31,14 @@
   (and (= da b) (= db a)))
 
 
+; Task 2
+
+(define (range from to)
+  (if (>= from to)
+      '()
+      (cons from (range (+ from 1) to))))
+
+
 ; Task 3 - a)
 
 (define il '((24 . 26) (90 . 100) (0 . 100) (10 . 89) (1 . 5) (-4 . 25)))
