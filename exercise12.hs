@@ -165,5 +165,3 @@ exchange :: Sum -> Currency -> Sum
 exchange (s, c) curr = if c == curr then (s, c)
                        else (s * r, curr)
                        where r = exchangeRate c curr
-
-type Student = (String, Int, String)
