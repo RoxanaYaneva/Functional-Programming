@@ -165,3 +165,40 @@ exchange :: Sum -> Currency -> Sum
 exchange (s, c) curr = if c == curr then (s, c)
                        else (s * r, curr)
                        where r = exchangeRate c curr
+
+
+data Expr = Const Double 
+    | X
+    | Expr :+: Expr
+    | Expr :-: Expr
+    | Expr :*: Expr
+    | Expr :/: Expr
+    | Expr   :^^: Double
+    | Double :**: Expr
+    deriving Show
+
+infixl 6 :+:
+infixl 6 :-:
+infixl 7 :*:
+infixl 7 :/:
+infixr 8 :^^:
+infixr 8 :**:
+
+eval :: Expr -> Double -> Double
+eval (Const a) _   = a
+eval X x           = x
+eval (e1 :+: e2) x = eval e1 x + eval e2 x
+eval (e1 :-: e2) x = eval e1 x - eval e2 x
+eval (e1 :*: e2) x = eval e1 x * eval e2 x
+eval (e1 :/: e2) x = eval e1 x / eval e2 x
+eval (e :^^: c)  x = (eval e x) ** c
+eval (c :**: e)  x = c ** (eval e x)
+
+derive :: Expr -> Expr
+derive (Const _)   = Const 0
+derive X           = Const 1
+derive (e1 :+: e2) = derive e1 :+: derive e2
+derive (e1 :-: e2) = derive e1 :-: derive e2
+derive (e1 :*: e2) = derive e1 :*: e2 :+: e1 :*: derive e2
+derive (e1 :^^: c) = Const c :*: e1 :^^: (c - 1)
+derive (e1 :/: e2) = (derive e1 :*: e2 :-: e1 :*: derive e2) :/: (e2 :^^: 2)
